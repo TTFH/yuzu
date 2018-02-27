@@ -107,15 +107,15 @@ void ServiceFrameworkBase::ReportUnimplementedFunction(Kernel::HLERequestContext
     auto cmd_buf = ctx.CommandBuffer();
     std::string function_name = info == nullptr ? fmt::format("{}", ctx.GetCommand()) : info->name;
 
-    fmt::MemoryWriter w;
-    w.write("function '{}': port='{}' cmd_buf={{[0]={:#x}", function_name, service_name,
+    fmt::memory_buffer w;
+    format_to(w, "function '{}': port='{}' cmd_buf={{[0]={:#x}", function_name, service_name,
             cmd_buf[0]);
     for (int i = 1; i <= 8; ++i) {
-        w.write(", [{}]={:#x}", i, cmd_buf[i]);
+        format_to(w, ", [{}]={:#x}", i, cmd_buf[i]);
     }
-    w << '}';
+    format_to(w, "{}", '}');
 
-    LOG_ERROR(Service, "unknown / unimplemented %s", w.c_str());
+    LOG_ERROR(Service, "unknown / unimplemented %s", to_string(w));
     UNIMPLEMENTED();
 }
 
